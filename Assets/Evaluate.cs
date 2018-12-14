@@ -28,7 +28,61 @@ public class Evaluate
 
     public static float Eval(string notation)
     {
-        return SuffixEval(InfixToSuffix(SeparateNotation(notation.ToLower())));
+        return SuffixEval(InfixToSuffix(ConvertNotation(notation)));
+    }
+
+
+    static string ConvertNotation(string notation)
+    {
+        string conversionNotation = "";
+
+        string[] notations = ConvertMultimodalOperator(SeparateNotation(notation.ToLower()));
+
+        foreach (string str in notations)
+            conversionNotation += " " + str;
+
+        return conversionNotation.Trim();
+    }
+
+    static readonly List<string> _multimodalOperator = new List<string>()   //储存多目运算符的List，暂时没找到更好的区分多目运算符的方法
+        {
+        "max",
+        "min",
+    };
+    static string[] ConvertMultimodalOperator(string originalNotation)
+    {
+        string[] splitedNotation = Regex.Split(originalNotation, "\\s+");
+
+        Stack<string> transformOperator = new Stack<string>();      //用于储存当前括号属于哪个运算符
+        List<string> transformedNotation = new List<string>();
+
+        foreach (string str in splitedNotation)
+        {
+            if (str == ",")         //逗号
+            {
+                transformedNotation.Add(transformOperator.Peek());  //遇到逗号直接改成当前括号的运算符，除了多目运算符不会有其他的使用逗号的情况
+            }
+            else if (str == "(")    //左括号
+            {
+                transformOperator.Push(transformedNotation[transformedNotation.Count - 1]);     //不论前一个元素是什么左括号都推进当前运算符栈
+
+                if (transformedNotation.Count > 0 && _multimodalOperator.Contains(transformedNotation[transformedNotation.Count - 1]))  //如果前一个元素是多目运算符
+                    transformedNotation.RemoveAt(transformedNotation.Count - 1);                //移除掉这个运算符
+
+                transformedNotation.Add("(");   //不论前一个元素是什么左括号都存进去
+            }
+            else if (str == ")")    //右括号
+            {
+                transformOperator.Pop();    //弹出这个括号的运算符
+                transformedNotation.Add(")");
+            }
+            else                    //其他运算符和数字
+            {
+                transformedNotation.Add(str);   //一概直接存入
+            }
+        }
+
+        return transformedNotation.ToArray();
     }
 
 
@@ -46,6 +100,8 @@ public class Evaluate
         separatedNotation = Regex.Replace(separatedNotation, "[(]", " ( ");    //左括号
 
         separatedNotation = Regex.Replace(separatedNotation, "[)]", " ) ");    //右括号
+
+        separatedNotation = Regex.Replace(separatedNotation, "[,]", " , ");    //逗号
 
         return separatedNotation;
 
@@ -226,12 +282,13 @@ public class Evaluate
                 return a / b;
 
             case "max":
-                return Mathf.Max(a, b);
+                return a > b ? a : b;
 
             case "min":
-                return Mathf.Min(a, b);
+                return a < b ? a : b;
 
             default:
+                Debug.LogError("发现未知运算符，无法进行计算");
                 return 0;
         }
     }

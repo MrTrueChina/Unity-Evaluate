@@ -24,11 +24,11 @@ public class EvaluateTest
             new string_float("2 * 3", 6),
             new string_float("( 1 + 2 ) * 3", 9),
             new string_float("1 + ( 3 / 2 ) * 7 + 3", 14.5f),
-            new string_float("1 max 3", 3),
-            new string_float("1 min 3", 1),
-            new string_float("1 * 3 max 3 * 5 min 7 * 5", 15),
-            new string_float("( 1 max 3 ) min ( 5 max 7 )", 3),
-            new string_float("  ( 1  max 3   ) min ( 5  max    7 )  ", 3),
+            new string_float("max(1 , 3)", 3),
+            new string_float("min(1 , 3)", 1),
+            new string_float("min(max(1 * 3 , 3 * 5) , 7 * 5)", 15),
+            new string_float("min(max( 1 , 3 ) , max( 5 , 7 ))", 3),
+            new string_float("  min(max( 1  , 3   ) , max( 5  ,    7 ))  ", 3),
         };
 
         foreach (string_float currentData in testData)
@@ -44,10 +44,11 @@ public class EvaluateTest
             new string_float("2 * 3", 6),
             new string_float("( 1 + 2 ) * 3", 9),
             new string_float("1 + ( 3 / 2 ) * 7 + 3", 14.5f),
-            new string_float("1 max 3", 3),
-            new string_float("1 min 3", 1),
-            new string_float("1 * 3 max 3 * 5 min 7 * 5", 15),
-            new string_float("( 1 max 3 ) min ( 5 max 7 )", 3),
+            new string_float("max ( 1 , 3 )", 3),
+            new string_float("min ( 1 , 3 )", 1),
+            new string_float("min ( max (1 * 3,  3 * 5) , 7 * 5)", 15),
+            new string_float("min(  MaX(1, 3 ) ,  MAX(5 , 7 ))", 3),
+            new string_float("min ( max( 1 , 3) , max ( 5 , 7) )", 3),
         };
 
         foreach (string_float currentData in testData)
@@ -63,11 +64,11 @@ public class EvaluateTest
             new string_float("2* 3", 6),
             new string_float("(1+2)*3", 9),
             new string_float("1 + ( 3 / 2 ) * 7 + 3", 14.5f),
-            new string_float("1 max      3     ", 3),
-            new string_float("1min3", 1),
+            new string_float("max   (1   , 3)     ", 3),
+            new string_float("min(1,3)", 1),
             new string_float("1   * 3 max 3 * 5 min 7 * 5", 15),
-            new string_float("( 1 max 3 ) min ( 5 max 7 )", 3),
-            new string_float("  ( 1  max 3   ) min ( 5  max    7 )  ", 3),
+            new string_float("min  (max(1 * 3,  3 * 5) , 7 * 5)", 15),
+            new string_float("min(max( 1 , 3)  ,max (5,7) )", 3),
             new string_float("1+2", 3),
             new string_float("1.568*2.598", 4.073664f),
             new string_float("1.568*-2.598", -4.073664f),
@@ -83,10 +84,10 @@ public class EvaluateTest
     {
         string_float[] testData = new string_float[]
         {
-            new string_float("1 mAx 3", 3),
-            new string_float("1 miN 3", 1),
-            new string_float("1 * 3 Max 3 * 5 MIn 7 * 5", 15),
-            new string_float("( 1 MaX 3 ) min ( 5 MAX 7 )", 3),
+            new string_float("mAx(1,3)", 3),
+            new string_float("miN(1, 3)", 1),
+            new string_float("MIn(Max(1 * 3, 3 * 5) , 7 * 5)", 15),
+            new string_float("min(  MaX(1, 3 ) ,  MAX(5 , 7 ))", 3),
         };
 
         foreach (string_float currentData in testData)
