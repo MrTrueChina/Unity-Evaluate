@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 
 [TestFixture]
 public class EvaluateTest
@@ -19,21 +16,6 @@ public class EvaluateTest
     }
 
     [Test]
-    public void ReversePolishEval()
-    {
-        string_float[] testData = new string_float[]
-        {
-            new string_float("1 2 + 3 *", 9),       //(1 + 2) * 3 = 9
-            new string_float("1 2 * 3 +", 5),       //1 * 2 + 3 = 5
-            new string_float("1 2 / 3 -", -2.5f),   //1 / 2 - 3 = -2.5
-            new string_float("1 3 - 2 /", -1),      //(1 - 3) / 2 = -1
-        };
-
-        foreach (string_float currentData in testData)
-            Assert.AreEqual(currentData.value, Evaluate.SuffixEval(currentData.str));
-    }
-
-    [Test]
     public void Eval_Test()
     {
         string_float[] testData = new string_float[]
@@ -46,6 +28,65 @@ public class EvaluateTest
             new string_float("1 min 3", 1),
             new string_float("1 * 3 max 3 * 5 min 7 * 5", 15),
             new string_float("( 1 max 3 ) min ( 5 max 7 )", 3),
+            new string_float("  ( 1  max 3   ) min ( 5  max    7 )  ", 3),
+        };
+
+        foreach (string_float currentData in testData)
+            Assert.AreEqual(currentData.value, Evaluate.Eval(currentData.str));
+    }
+
+    [Test]
+    public void Eval_Normal_Test()
+    {
+        string_float[] testData = new string_float[]
+        {
+            new string_float("1 + 2", 3),
+            new string_float("2 * 3", 6),
+            new string_float("( 1 + 2 ) * 3", 9),
+            new string_float("1 + ( 3 / 2 ) * 7 + 3", 14.5f),
+            new string_float("1 max 3", 3),
+            new string_float("1 min 3", 1),
+            new string_float("1 * 3 max 3 * 5 min 7 * 5", 15),
+            new string_float("( 1 max 3 ) min ( 5 max 7 )", 3),
+        };
+
+        foreach (string_float currentData in testData)
+            Assert.AreEqual(currentData.value, Evaluate.Eval(currentData.str));
+    }
+
+    [Test]
+    public void Eval_Space_Test()
+    {
+        string_float[] testData = new string_float[]
+        {
+            new string_float("1   +  2", 3),
+            new string_float("2* 3", 6),
+            new string_float("(1+2)*3", 9),
+            new string_float("1 + ( 3 / 2 ) * 7 + 3", 14.5f),
+            new string_float("1 max      3     ", 3),
+            new string_float("1min3", 1),
+            new string_float("1   * 3 max 3 * 5 min 7 * 5", 15),
+            new string_float("( 1 max 3 ) min ( 5 max 7 )", 3),
+            new string_float("  ( 1  max 3   ) min ( 5  max    7 )  ", 3),
+            new string_float("1+2", 3),
+            new string_float("1.568*2.598", 4.073664f),
+            new string_float("1.568*-2.598", -4.073664f),
+            new string_float("((-7.25+6.25)*(7.6/96.4)+1576.2)*3.5", 5516.42406639f),
+        };
+
+        foreach (string_float currentData in testData)
+            Assert.AreEqual(currentData.value, Evaluate.Eval(currentData.str));
+    }
+
+    [Test]
+    public void Eval_Upper_Test()
+    {
+        string_float[] testData = new string_float[]
+        {
+            new string_float("1 mAx 3", 3),
+            new string_float("1 miN 3", 1),
+            new string_float("1 * 3 Max 3 * 5 MIn 7 * 5", 15),
+            new string_float("( 1 MaX 3 ) min ( 5 MAX 7 )", 3),
         };
 
         foreach (string_float currentData in testData)

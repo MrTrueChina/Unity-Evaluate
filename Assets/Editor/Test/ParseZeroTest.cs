@@ -1,7 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Text.RegularExpressions;
 using NUnit.Framework;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
+using UnityEngine;
 
 [TestFixture]
 public class ParseZeroTest
