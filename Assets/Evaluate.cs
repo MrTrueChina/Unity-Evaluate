@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
 namespace MtC.Tools.Evaluate
 {
-    public class Evaluate
+    public static class Evaluate
     {
         const string slowest = "Slowest";
         /// <summary>
@@ -266,33 +267,23 @@ namespace MtC.Tools.Evaluate
 
             return stack.Pop();
         }
-
         static float Calculate(float a, float b, string operatorString)
         {
-            switch (operatorString)
-            {
-                case "+":
-                    return a + b;
+            Func<float, float, float> calculate;
+            if (calculates.TryGetValue(operatorString, out calculate))
+                return calculate(a, b);
 
-                case "-":
-                    return a - b;
-
-                case "*":
-                    return a * b;
-
-                case "/":
-                    return a / b;
-
-                case "max":
-                    return a > b ? a : b;
-
-                case "min":
-                    return a < b ? a : b;
-
-                default:
-                    Debug.LogError("发现未知运算符，无法进行计算");
-                    return 0;
-            }
+            Debug.LogError("发现未知运算符" + operatorString + "无法进行运算");
+            return 0;
         }
+        static readonly Dictionary<string, Func<float, float, float>> calculates = new Dictionary<string, Func<float, float, float>>()
+        {
+            { "+", (float a, float b) => { return a + b; } },
+            { "-", (float a, float b) => { return a - b; } },
+            { "*", (float a, float b) => { return a * b; } },
+            { "/", (float a, float b) => { return a / b; } },
+            { "max", (float a, float b) => { return a > b ? a : b; } },
+            { "min", (float a, float b) => { return a < b ? a : b; } },
+        };
     }
 }
